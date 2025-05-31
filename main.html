@@ -35,8 +35,54 @@
   </div>
 
 <script>
-//Your code goes here 
-</script>
+  const container = document.querySelector('.items');
+  const cubes = document.querySelectorAll('.item');
 
+  let selectedCube = null;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  cubes.forEach(cube => {
+    // Set initial position style
+    cube.style.position = 'absolute';
+    cube.style.left = cube.offsetLeft + 'px';
+    cube.style.top = cube.offsetTop + 'px';
+
+    // Remove from layout flow
+    cube.style.margin = 0;
+
+    cube.addEventListener('mousedown', (e) => {
+      selectedCube = cube;
+      offsetX = e.clientX - cube.offsetLeft;
+      offsetY = e.clientY - cube.offsetTop;
+      cube.style.zIndex = 1000;
+    });
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (selectedCube) {
+      const containerRect = container.getBoundingClientRect();
+      const cubeRect = selectedCube.getBoundingClientRect();
+
+      // New position
+      let newX = e.clientX - offsetX - containerRect.left;
+      let newY = e.clientY - offsetY - containerRect.top;
+
+      // Constrain inside container
+      newX = Math.max(0, Math.min(newX, container.clientWidth - selectedCube.offsetWidth));
+      newY = Math.max(0, Math.min(newY, container.clientHeight - selectedCube.offsetHeight));
+
+      selectedCube.style.left = newX + 'px';
+      selectedCube.style.top = newY + 'px';
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (selectedCube) {
+      selectedCube.style.zIndex = 1;
+      selectedCube = null;
+    }
+  });
+</script>
   </body>
 </html>
